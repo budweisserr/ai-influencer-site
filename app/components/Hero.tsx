@@ -3,35 +3,6 @@
 import { useState } from "react";
 
 export default function Hero() {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleCheckout = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ plan: "basic" }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to create checkout session");
-      }
-
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch (error) {
-      console.error("Checkout error:", error);
-      alert(error instanceof Error ? error.message : "Failed to start checkout. Please try again.");
-      setIsLoading(false);
-    }
-  };
-
   return (
     <section className="relative overflow-hidden pt-32 pb-16 md:pt-48 md:pb-32">
       <div className="container mx-auto px-6 text-center">
@@ -56,13 +27,12 @@ export default function Hero() {
 
         {/* Buttons */}
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <button
-            onClick={handleCheckout}
-            disabled={isLoading}
+        <a
+            href="#pricing"
             className="w-full rounded-full bg-blue-600 px-8 py-4 text-lg font-bold text-white transition-all hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/25 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
-            {isLoading ? "Loading..." : "Start Learning — $49"}
-          </button>
+            Pricing
+          </a>
           <a
             href="#features"
             className="w-full rounded-full border border-zinc-200 bg-white px-8 py-4 text-lg font-medium text-zinc-900 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100 dark:hover:bg-zinc-900 sm:w-auto"
