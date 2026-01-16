@@ -51,6 +51,10 @@ export async function POST(req: Request) {
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${BASE_URL}/success`,
       cancel_url: `${BASE_URL}/`,
+      customer_email: undefined, // Let Stripe collect email during checkout
+      metadata: {
+        plan: plan,
+      },
     });
 
     if (!session.url) {
