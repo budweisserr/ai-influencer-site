@@ -68,6 +68,9 @@ STRIPE_SECRET_KEY=sk_test_...
 STRIPE_PRICE_BASIC=price_...
 STRIPE_PRICE_DEEP=price_...
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
+STRIPE_WEBHOOK_SECRET=whsec_...
+RESEND_API_KEY=re_...
+RESEND_FROM_EMAIL=noreply@yourdomain.com
 ```
 
 4. Run the development server:
@@ -85,6 +88,9 @@ npm run dev
 | `STRIPE_PRICE_BASIC` | Stripe price ID for basic plan | Yes |
 | `STRIPE_PRICE_DEEP` | Stripe price ID for deep plan | Yes |
 | `NEXT_PUBLIC_BASE_URL` | Base URL of your application | Yes |
+| `STRIPE_WEBHOOK_SECRET` | Stripe webhook signing secret | Yes (for emails) |
+| `RESEND_API_KEY` | Resend API key for sending emails | Yes (for emails) |
+| `RESEND_FROM_EMAIL` | Email address to send from (must be verified in Resend) | Yes (for emails) |
 
 ## Available Scripts
 
@@ -128,6 +134,43 @@ Creates a Stripe checkout session.
   "url": "https://checkout.stripe.com/..."
 }
 ```
+
+### POST `/api/webhooks/stripe`
+Stripe webhook endpoint for handling payment events. Automatically sends welcome emails to customers after successful payment.
+
+**Events Handled:**
+- `checkout.session.completed` - Sends welcome email with course access information
+
+## Email Setup
+
+The application automatically sends welcome emails to customers after successful payment using Resend.
+
+### Setup Steps:
+
+1. **Create a Resend account** at [resend.com](https://resend.com)
+2. **Get your API key** from the Resend dashboard
+3. **Verify your domain** or use the default `onboarding@resend.dev` for testing
+4. **Add environment variables:**
+   - `RESEND_API_KEY` - Your Resend API key
+   - `RESEND_FROM_EMAIL` - Verified email address (e.g., `noreply@yourdomain.com`)
+
+### Stripe Webhook Configuration:
+
+1. **Go to Stripe Dashboard** → Developers → Webhooks
+2. **Add endpoint:** `https://yourdomain.com/api/webhooks/stripe`
+3. **Select events to listen to:**
+   - `checkout.session.completed`
+4. **Copy the webhook signing secret** and add it as `STRIPE_WEBHOOK_SECRET` in your environment variables
+
+### Local Development:
+
+For local testing, use [Stripe CLI](https://stripe.com/docs/stripe-cli):
+
+```bash
+stripe listen --forward-to localhost:3000/api/webhooks/stripe
+```
+
+This will give you a webhook signing secret starting with `whsec_` - use this as `STRIPE_WEBHOOK_SECRET` in your `.env.local`.
 
 ## Styling
 
